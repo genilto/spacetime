@@ -1,5 +1,4 @@
-import { StatusBar } from 'expo-status-bar'
-import { ImageBackground, Text, TouchableOpacity, View } from 'react-native'
+import { Text, TouchableOpacity, View } from 'react-native'
 import * as SecureStore from 'expo-secure-store'
 import { styled } from 'nativewind'
 import { makeRedirectUri, useAuthRequest } from 'expo-auth-session'
@@ -14,7 +13,6 @@ import {
 
 import { BaiJamjuree_700Bold } from '@expo-google-fonts/bai-jamjuree'
 
-import blurBg from '../src/assets/bg-blur.png'
 import Stripes from '../src/assets/stripes.svg'
 import NLWLogo from '../src/assets/nlw-spacetime-logo.svg'
 import { api } from '../src/lib/api'
@@ -50,7 +48,8 @@ export default function App() {
   )
 
   async function handleGitHubOauthCode(code: string) {
-    const resp = await api.post('/register', { code })
+    console.log('handling')
+    const resp = await api.post('/register', { code, from: 'MOBILE' })
     const { token } = resp.data
     console.log(token)
     await SecureStore.setItemAsync('token', token)
@@ -58,11 +57,11 @@ export default function App() {
   }
 
   useEffect(() => {
-    // console.log(
-    //   makeRedirectUri({
-    //     scheme: 'nlwspacetime',
-    //   }),
-    // )
+    console.log(
+      makeRedirectUri({
+        scheme: 'nlwspacetime',
+      }),
+    )
 
     if (response?.type === 'success') {
       const { code } = response.params
@@ -75,11 +74,7 @@ export default function App() {
   }
 
   return (
-    <ImageBackground
-      source={blurBg}
-      className="relative flex-1 bg-gray-900 px-8 py-10"
-      imageStyle={{ position: 'absolute', left: '-100%' }}
-    >
+    <View className="relative flex-1 bg-gray-900 px-8 py-10">
       <StylesStripes className="absolute left-2" />
 
       <View className="flex-1 items-center justify-center gap-6">
@@ -108,8 +103,6 @@ export default function App() {
       <Text className="text-center font-body text-sm leading-relaxed text-gray-200">
         Feito com 💜 no NLW da Rocketseat
       </Text>
-
-      <StatusBar style="light" />
-    </ImageBackground>
+    </View>
   )
 }

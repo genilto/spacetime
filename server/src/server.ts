@@ -5,6 +5,10 @@ import { memoriesRoutes } from './routes/memories'
 import fastifyCors from '@fastify/cors'
 import { authRoutes } from './routes/auth'
 import fastifyJwt from '@fastify/jwt'
+import fastifyStatic from '@fastify/static'
+import multipart from '@fastify/multipart'
+import { uploadRoutes } from './routes/upload'
+import { resolve } from 'path'
 
 const app = fastify()
 
@@ -16,7 +20,15 @@ app.register(fastifyJwt, {
   secret: 'weifrg3joeon!22BBhb37@3ubefi00477299017we-47',
 })
 
+app.register(multipart)
+
+app.register(fastifyStatic, {
+  root: resolve(__dirname, '..', 'uploads'),
+  prefix: '/uploads',
+})
+
 app.register(authRoutes)
+app.register(uploadRoutes)
 app.register(memoriesRoutes)
 
 app

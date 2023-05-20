@@ -7,16 +7,29 @@ export async function authRoutes(app: FastifyInstance) {
   app.post('/register', async (request) => {
     const bodySchema = z.object({
       code: z.string(),
+      from: z.string(),
     })
-    const { code } = bodySchema.parse(request.body)
+    const { code, from } = bodySchema.parse(request.body)
+
+    console.log(code, from)
+
+    // Github web
+    let client_id = process.env.GITHUB_CLIENT_ID
+    let client_secret = process.env.GITHUB_CLIENT_SECRET
+
+    if (from && from === 'MOBILE') {
+      // Github mobile
+      client_id = process.env.GITHUB_CLIENT_ID_MOBILE
+      client_secret = process.env.GITHUB_CLIENT_SECRET_MOBILE
+    }
 
     const accessTokenResponse = await axios.post(
       'https://github.com/login/oauth/access_token',
       null,
       {
         params: {
-          client_id: process.env.GITHUB_CLIENT_ID,
-          client_secret: process.env.GITHUB_CLIENT_SECRET,
+          client_id,
+          client_secret,
           code,
         },
         headers: {
