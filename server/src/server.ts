@@ -17,7 +17,7 @@ app.register(fastifyCors, {
 })
 
 app.register(fastifyJwt, {
-  secret: 'weifrg3joeon!22BBhb37@3ubefi00477299017we-47',
+  secret: process.env.JWT_SECRET as string,
 })
 
 app.register(multipart)

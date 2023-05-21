@@ -27,6 +27,14 @@
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
-    }
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Precisamos acessar suas fotos para poder criar suas memórias."
+        }
+      ]
+    ]
   }
 }

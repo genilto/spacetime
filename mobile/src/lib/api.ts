@@ -1,5 +1,6 @@
 import axios from 'axios'
+import { BACKEND_API_ENDPOINT } from '@env'
 
 export const api = axios.create({
-  baseURL: 'http://192.168.1.15:3333',
+  baseURL: BACKEND_API_ENDPOINT,
 })

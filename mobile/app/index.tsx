@@ -1,44 +1,26 @@
-import { Text, TouchableOpacity, View } from 'react-native'
-import * as SecureStore from 'expo-secure-store'
-import { styled } from 'nativewind'
-import { makeRedirectUri, useAuthRequest } from 'expo-auth-session'
 import { useEffect } from 'react'
 import { useRouter } from 'expo-router'
+import { Text, TouchableOpacity, View } from 'react-native'
+import { makeRedirectUri, useAuthRequest } from 'expo-auth-session'
+import * as SecureStore from 'expo-secure-store'
+import { GITHUB_CLIENT_ID } from '@env'
 
-import {
-  useFonts,
-  Roboto_400Regular,
-  Roboto_700Bold,
-} from '@expo-google-fonts/roboto'
-
-import { BaiJamjuree_700Bold } from '@expo-google-fonts/bai-jamjuree'
-
-import Stripes from '../src/assets/stripes.svg'
 import NLWLogo from '../src/assets/nlw-spacetime-logo.svg'
 import { api } from '../src/lib/api'
 
-const StylesStripes = styled(Stripes)
-
-// Endpoint
 const discovery = {
   authorizationEndpoint: 'https://github.com/login/oauth/authorize',
   tokenEndpoint: 'https://github.com/login/oauth/access_token',
   revocationEndpoint:
-    'https://github.com/settings/connections/applications/1f802a3cfb82bb8d8beb',
+    'https://github.com/settings/connections/applications/d26f194cc5d5132a51be',
 }
 
 export default function App() {
   const router = useRouter()
 
-  const [hasLoeadedFonts] = useFonts({
-    Roboto_400Regular,
-    Roboto_700Bold,
-    BaiJamjuree_700Bold,
-  })
-
-  const [, response, signinWithGithub] = useAuthRequest(
+  const [, response, signInWithGithub] = useAuthRequest(
     {
-      clientId: '1f802a3cfb82bb8d8beb',
+      clientId: GITHUB_CLIENT_ID,
       scopes: ['identity'],
       redirectUri: makeRedirectUri({
         scheme: 'nlwspacetime',
@@ -47,17 +29,22 @@ export default function App() {
     discovery,
   )
 
-  async function handleGitHubOauthCode(code: string) {
-    console.log('handling')
-    const resp = await api.post('/register', { code, from: 'MOBILE' })
-    const { token } = resp.data
-    console.log(token)
+  async function handleGithubOAuthCode(code: string) {
+    const response = await api.post('/register', {
+      code,
+      from: 'MOBILE',
+    })
+
+    const { token } = response.data
+
     await SecureStore.setItemAsync('token', token)
+
     router.push('/memories')
   }
 
   useEffect(() => {
     console.log(
+      'redirect uri',
       makeRedirectUri({
         scheme: 'nlwspacetime',
       }),
@@ -65,18 +52,15 @@ export default function App() {
 
     if (response?.type === 'success') {
       const { code } = response.params
-      handleGitHubOauthCode(code)
+
+      handleGithubOAuthCode(code)
+    } else {
+      console.log(response)
     }
   }, [response])
 
-  if (!hasLoeadedFonts) {
-    return null
-  }
-
   return (
-    <View className="relative flex-1 bg-gray-900 px-8 py-10">
-      <StylesStripes className="absolute left-2" />
-
+    <View className="flex-1 items-center px-8 py-10">
       <View className="flex-1 items-center justify-center gap-6">
         <NLWLogo />
 
@@ -89,13 +73,14 @@ export default function App() {
             quiser) com o mundo!
           </Text>
         </View>
+
         <TouchableOpacity
           activeOpacity={0.7}
-          className="rounded-full bg-green-500 px-5 py-3"
-          onPress={() => signinWithGithub()}
+          className="rounded-full bg-green-500 px-5 py-2"
+          onPress={() => signInWithGithub()}
         >
-          <Text className="font-alt text-sm font-bold uppercase text-black">
-            Cadastrar Lembrança
+          <Text className="font-alt text-sm uppercase text-black">
+            Cadastrar lembrança
           </Text>
         </TouchableOpacity>
       </View>

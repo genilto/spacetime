@@ -140,7 +140,11 @@ export default function NewMemory() {
           placeholder="Fique livre para adicionar fotos, vídeos e relatos sobre essa experiência que você quer lembrar para sempre."
         />
 
-        <TouchableOpacity activeOpacity={0.7} onPress={handleCreateMemory}>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={handleCreateMemory}
+          className="items-center self-end rounded-full bg-green-500 px-5 py-2"
+        >
           <Text className="font-alt text-sm uppercase text-black">Salvar</Text>
         </TouchableOpacity>
       </View>
